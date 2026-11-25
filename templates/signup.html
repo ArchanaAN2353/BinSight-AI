@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Signup</title>
+
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            font-family: Arial, sans-serif;
+            overflow: hidden;
+
+            /* 🌄 BACKGROUND IMAGE */
+            background: url("/static/images/signup_bg.jpg") no-repeat center center fixed;
+            background-size: cover;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .recycle {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-size: 40px;
+            animation: spin 4s linear infinite;
+        }
+
+        @keyframes spin {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .float {
+            position: absolute;
+            font-size: 30px;
+            animation: float 8s linear infinite;
+            opacity: 0.7;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh);
+            }
+            100% {
+                transform: translateY(-10vh);
+            }
+        }
+
+        .box {
+            width: 350px;
+            padding: 30px;
+            text-align: center;
+
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(15px);
+
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.3);
+            box-shadow: 0 0 20px rgba(255,255,255,0.2);
+
+            color: white;
+            z-index: 1;
+        }
+
+        h2 {
+            margin-bottom: 20px;
+        }
+
+        .input-box {
+            position: relative;
+            margin: 15px 0;
+        }
+
+        .input-box input {
+            width: calc(100% - 20px);
+            padding: 10px 40px 10px 15px;
+            border-radius: 20px;
+            border: none;
+            outline: none;
+            box-sizing: border-box;
+
+            background: rgba(255,255,255,0.2);
+            color: white;
+            font-size: 15px;
+        }
+
+        .input-box input::placeholder {
+            color: #f1f1f1;
+        }
+
+        .input-box span {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            border-radius: 20px;
+            border: none;
+            margin-top: 15px;
+
+            background: white;
+            color: #2e7d32;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background: #c8e6c9;
+            transform: scale(1.03);
+        }
+
+        a {
+            color: #e8f5e9;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="recycle">♻️</div>
+
+<div class="float" style="left:10%;">🌱</div>
+<div class="float" style="left:40%; animation-delay:2s;">🍃</div>
+<div class="float" style="left:70%; animation-delay:4s;">♻️</div>
+<div class="float" style="left:55%; animation-delay:3s; color:red;">☣️</div>
+
+<div class="box">
+    <h2>🌿 Create Account</h2>
+
+    <form method="POST">
+
+        <div class="input-box">
+            <input type="text" name="username" placeholder="Username" required>
+            <span>👤</span>
+        </div>
+
+        <div class="input-box">
+            <input type="password" name="password" placeholder="Password" required>
+            <span>🔒</span>
+        </div>
+
+        <button type="submit" onclick="playSound()">
+            Signup
+        </button>
+
+    </form>
+
+    <p>
+        Already have account?
+        <a href="/login">Login</a>
+    </p>
+</div>
+
+<audio id="clickSound"
+src="https://www.soundjay.com/buttons/sounds/button-16.mp3">
+</audio>
+
+<script>
+function playSound() {
+    document.getElementById("clickSound").play();
+}
+</script>
+
+</body>
+</html>
+
