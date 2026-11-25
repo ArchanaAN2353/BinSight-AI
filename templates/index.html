@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <title>BinSight AI</title>
+
+    <link rel="stylesheet" href="/static/style.css">
+
+    <style>
+
+        body{
+            font-family:Arial,sans-serif;
+            margin:0;
+            padding:20px 0;
+
+            background-image:url('/static/images/bg.jpg');
+            background-size:cover;
+            background-position:center;
+            background-attachment:fixed;
+
+            min-height:100vh;
+
+            display:flex;
+            justify-content:center;
+            align-items:flex-start;
+
+            overflow-y:auto;
+        }
+
+        body::before{
+            content:"";
+            position:fixed;
+            top:0;
+            left:0;
+            width:100%;
+            height:100%;
+
+            background:rgba(0,0,0,0.30);
+
+            z-index:-1;
+        }
+
+        /* MAIN GLASS CONTAINER */
+
+        .container{
+
+            width:78%;
+            max-width:950px;
+
+            background:rgba(255,255,255,0.10);
+
+            backdrop-filter:blur(16px);
+            -webkit-backdrop-filter:blur(16px);
+
+            border:1px solid rgba(255,255,255,0.12);
+
+            border-radius:22px;
+
+            padding:20px 24px;
+
+            box-shadow:
+                0 6px 20px rgba(0,0,0,0.18),
+                inset 0 0 10px rgba(255,255,255,0.03);
+
+            margin:15px auto;
+        }
+
+        h1{
+            color:white;
+            text-align:center;
+
+            font-size:52px;
+
+            margin-bottom:22px;
+
+            text-shadow:0 0 10px rgba(255,255,255,0.4);
+        }
+
+        /* MAIN LAYOUT */
+
+        .main-layout{
+            display:flex;
+            justify-content:center;
+            align-items:flex-start;
+
+            gap:30px;
+
+            transition:0.5s ease;
+        }
+
+        .main-layout.active{
+            gap:30px;
+        }
+
+        /* LEFT PANEL */
+
+        .left-panel{
+            width:100%;
+            max-width:500px;
+        }
+
+        /* RIGHT PANEL */
+
+        .right-panel{
+            width:100%;
+            max-width:330px;
+
+            opacity:0;
+            transform:translateX(15px);
+
+            transition:0.5s ease;
+
+            display:none;
+
+            margin-top:0;
+        }
+
+        .main-layout.active .right-panel{
+            opacity:1;
+            transform:translateX(0);
+            display:flex;
+            flex-direction:column;
+            gap:13px;
+        }
+
+        /* RECTANGULAR UPLOAD BOX */
+
+        .upload-box{
+
+            width:100%;
+            height:90px;
+
+            border:2px dashed rgba(255,255,255,0.35);
+
+            background:rgba(255,255,255,0.08);
+
+            backdrop-filter:blur(10px);
+
+            border-radius:16px;
+
+            cursor:pointer;
+
+            color:white;
+
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+
+            padding:0 25px;
+
+            box-sizing:border-box;
+
+            font-size:20px;
+            font-weight:bold;
+        }
+
+        /* FILE INPUT */
+
+        #fileInput{
+            color:white;
+            width:220px;
+        }
+
+        /* FIXED IMAGE SIZE */
+
+        .image-preview-container{
+
+            width:100%;
+            height:300px;
+
+            margin-top:14px;
+
+            border-radius:18px;
+
+            overflow:hidden;
+
+            background:rgba(255,255,255,0.08);
+
+            display:flex;
+            justify-content:center;
+            align-items:center;
+
+            border:1px solid rgba(255,255,255,0.15);
+        }
+
+        #preview{
+
+            width:100%;
+            height:100%;
+
+            object-fit:cover;
+
+            display:none;
+        }
+
+        /* BUTTON */
+
+        button{
+
+            width:100%;
+
+            padding:14px;
+
+            margin-top:14px;
+
+            background:rgba(75,28,145,0.95);
+
+            color:white;
+
+            border:none;
+
+            border-radius:14px;
+
+            cursor:pointer;
+
+            font-size:20px;
+            font-weight:bold;
+
+            transition:0.3s ease;
+        }
+
+        button:hover{
+            transform:translateY(-2px);
+            background:#3d1577;
+        }
+
+        /* PREDICTION */
+
+        .prediction-bar{
+
+            padding:16px;
+
+            border-radius:14px;
+
+            font-size:24px;
+
+            font-weight:bold;
+
+            color:white;
+
+            text-align:center;
+        }
+
+        .biodegradable{
+            background:#4CAF50;
+        }
+
+        .hazardous{
+            background:#e53935;
+        }
+
+        .recyclable{
+            background:#2196F3;
+        }
+
+        .non_recyclable{
+            background:#616161;
+        }
+
+        /* TIP BOX */
+
+        .tip-box{
+
+            margin-top:10px;
+
+            background:rgba(255,255,255,0.08);
+
+            padding:16px;
+
+            border-radius:14px;
+
+            color:white;
+
+            backdrop-filter:blur(8px);
+
+            border:1px solid rgba(255,255,255,0.12);
+
+            font-size:16px;
+
+            line-height: 1.4;
+        }
+
+        /* PROBLEM BOX */
+
+        .problems{
+
+            margin-top:10px;
+
+            background:rgba(255,255,255,0.10);
+
+            backdrop-filter:blur(12px);
+
+            padding:14px;
+
+            border-radius:16px;
+
+            display:flex;
+
+            justify-content:space-between;
+
+            align-items:flex-start;
+
+            gap: 15px;
+
+            color:white;
+
+            border:1px solid rgba(255,255,255,0.12);
+        }
+
+        .problem-left{
+            width:75%;
+            line-height:1.8;
+            word-break:keep-all;
+            overflow-wrap:break-word;
+            text-align:left;
+            font-size:16px;
+        }
+
+        .problem-left ul{
+            padding-left:18px;
+            margin-top:8px;
+            margin-bottom:0;
+        }
+
+        .problem-left li{
+            margin-bottom:6px;
+        }
+
+        .problem-right{
+            width:25%;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+
+        }
+
+        /* CIRCLE */
+
+        .circle-wrap{
+            width:100px;
+            height:100px;
+            position:relative;
+        }
+
+        .circle-wrap svg{
+            transform:rotate(-90deg);
+        }
+
+        .circle-wrap circle{
+            fill:none;
+            stroke-width:8;
+            stroke-linecap:round;
+        }
+
+        .bg{
+            stroke:rgba(255,255,255,0.2);
+        }
+
+        .progress{
+            transition:1.5s ease;
+        }
+
+        .circle-text{
+
+            position:absolute;
+
+            top:50%;
+            left:50%;
+
+            transform:translate(-50%,-50%);
+
+            font-weight:bold;
+
+            font-size:16px;
+
+            color:white;
+        }
+
+        /* SCANNING EFFECT */
+
+        .scanning{
+            position:relative;
+            overflow:hidden;
+        }
+
+        .scanning::after{
+            content:"";
+            position:absolute;
+            top:0;
+            left:-100%;
+            width:100%;
+            height:100%;
+            background:rgba(255,255,255,0.22);
+            animation:scan 0.7s infinite;
+        }
+
+        @keyframes scan{
+            0%{
+                left:-100%;
+            }
+
+            100%{
+                left:100%;
+            }
+        }
+
+        /* HISTORY LINK */
+
+        .history-link{
+            text-align:center;
+            margin-top:18px;
+        }
+
+        .history-link a{
+            color:white;
+            text-decoration:none;
+            font-size:18px;
+            font-weight:bold;
+        }
+
+        .history-link a:hover{
+            text-decoration:underline;
+        }
+
+        /* MOBILE */
+
+        @media(max-width:950px){
+
+            .main-layout,
+            .main-layout.active{
+                flex-direction:column;
+                align-items:center;
+            }
+
+            .left-panel,
+            .right-panel{
+                max-width:100%;
+            }
+
+            h1{
+                font-size:34px;
+            }
+
+            .upload-box{
+                flex-direction:column;
+                justify-content:center;
+                gap:10px;
+                height:auto;
+                padding:20px;
+            }
+
+            .problems{
+                flex-direction:column;
+                gap:18px;
+            }
+
+            .problem-left,
+            .problem-right{
+                width:100%;
+            }
+
+            .image-preview-container{
+                height:240px;
+            }
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>BinSight AI</h1>
+
+    <div class="main-layout" id="mainLayout">
+
+        <!-- LEFT -->
+
+        <div class="left-panel">
+
+            <div class="upload-box" id="drop-area">
+
+                <span>Drag & Drop Image Here</span>
+
+                <input type="file" id="fileInput" accept="image/*">
+
+            </div>
+
+            <div class="image-preview-container">
+
+                <img id="preview" alt="Preview Image">
+
+            </div>
+
+            <button onclick="predict()">
+                Predict Waste
+            </button>
+
+        </div>
+
+        <!-- RIGHT -->
+
+        <div class="right-panel" id="result"></div>
+
+    </div>
+
+    <div class="history-link">
+
+        <a href="/history" target="_blank">
+            View Prediction History
+        </a>
+
+    </div>
+
+</div>
+
+<script>
+
+let selectedImage = null;
+let scanAudio = null;
+
+/* =====================================
+   RANDOM PROBLEMS DATABASE
+===================================== */
+
+const wasteProblems = {
+
+    hazardous: [
+        "Toxic exposure to humans",
+        "Water contamination",
+        "Soil pollution",
+        "Fire hazards",
+        "Explosion risks",
+        "Air pollution",
+        "Cancer causing chemicals",
+        "Damage to aquatic life",
+        "Harmful toxic gases",
+        "Poisoning risk",
+        "Corrosion of land",
+        "Groundwater pollution",
+        "Danger to sanitation workers",
+        "Harmful smoke release",
+        "Respiratory diseases",
+        "Acidic chemical leakage",
+        "Injury risks",
+        "Heavy metal contamination",
+        "Radioactive exposure",
+        "Permanent ecosystem damage",
+        "Food chain contamination",
+        "Animal poisoning",
+        "Unsafe landfill conditions",
+        "Toxic waste accumulation",
+        "Public health risks",
+        "Industrial contamination",
+        "Dangerous bacterial growth",
+        "Chemical burns",
+        "Environmental imbalance",
+        "Severe waste toxicity"
+    ],
+
+    biodegradable: [
+        "Produces methane gas",
+        "Bad odor generation",
+        "Attracts pests",
+        "Mosquito breeding",
+        "Bacterial growth",
+        "Drain blockage",
+        "Soil contamination",
+        "Water pollution",
+        "Air pollution",
+        "Increased landfill waste",
+        "Rotting food smell",
+        "Disease spreading insects",
+        "Harmful microorganisms",
+        "Greenhouse gas release",
+        "Unhygienic surroundings",
+        "Sanitation issues",
+        "Food contamination",
+        "Waste overflow",
+        "Environmental imbalance",
+        "Contaminated compost",
+        "Public hygiene issues",
+        "Fungal growth",
+        "Street littering",
+        "Animal attraction",
+        "Waste decomposition smell",
+        "Slippery surfaces",
+        "Community health risks",
+        "Garbage pile formation",
+        "Harmful organic decay",
+        "Dirty surroundings"
+    ],
+
+    recyclable: [
+        "Wastes reusable materials",
+        "Increases landfill load",
+        "Higher pollution levels",
+        "Loss of valuable resources",
+        "Extra energy consumption",
+        "Plastic accumulation",
+        "Ocean pollution",
+        "Deforestation increase",
+        "Resource depletion",
+        "Wildlife harm",
+        "Air pollution increase",
+        "Economic material loss",
+        "Unnecessary waste growth",
+        "Environmental degradation",
+        "Excess garbage production",
+        "Increased carbon footprint",
+        "Natural resource wastage",
+        "Poor waste management",
+        "Land pollution",
+        "Waste of recyclable paper",
+        "Glass waste accumulation",
+        "Metal resource loss",
+        "Recycling inefficiency",
+        "Urban waste growth",
+        "Packaging waste buildup",
+        "Factory pollution increase",
+        "Higher disposal costs",
+        "Reduced sustainability",
+        "Excess plastic burning",
+        "Global warming impact"
+    ],
+
+    non_recyclable: [
+        "Long-term pollution",
+        "Landfill overflow",
+        "Harm to wildlife",
+        "Soil degradation",
+        "Plastic persistence",
+        "Water blockage",
+        "Drain clogging",
+        "Microplastic pollution",
+        "Environmental damage",
+        "Air pollution from burning",
+        "Toxic smoke release",
+        "Waste accumulation",
+        "Ocean contamination",
+        "Public hygiene problems",
+        "Non-degradable waste buildup",
+        "Animal choking hazards",
+        "Visual pollution",
+        "Increased garbage levels",
+        "Urban pollution",
+        "Ecosystem imbalance",
+        "Unmanageable waste increase",
+        "Threat to marine life",
+        "Land contamination",
+        "Garbage mountain formation",
+        "Unhealthy surroundings",
+        "Plastic ingestion by animals",
+        "Reduced soil fertility",
+        "Community sanitation issues",
+        "Persistent waste hazards",
+        "Environmental toxicity"
+    ]
+};
+
+// 🔊 Play scanning sound
+
+function playScanSound(){
+
+    scanAudio = new Audio("/static/sounds/scan.mp3");
+
+    scanAudio.loop = true;
+
+    scanAudio.play();
+}
+
+// 🔇 Stop scanning sound
+
+function stopScanSound(){
+
+    if(scanAudio){
+
+        scanAudio.pause();
+
+        scanAudio.currentTime = 0;
+    }
+}
+
+// 🎙️ Speak result
+
+function speakResult(text){
+
+    const speech = new SpeechSynthesisUtterance(text);
+
+    speech.rate = 1;
+    speech.pitch = 1;
+    speech.volume = 1;
+
+    window.speechSynthesis.cancel();
+
+    window.speechSynthesis.speak(speech);
+}
+
+// 🎲 RANDOM 5 PROBLEMS
+
+function getRandomProblems(category){
+
+    let allProblems = wasteProblems[category];
+
+    let shuffled = [...allProblems].sort(() => 0.5 - Math.random());
+
+    return shuffled.slice(0,5);
+}
+
+document.getElementById("fileInput").addEventListener("change", function(e){
+
+    const file = e.target.files[0];
+
+    const reader = new FileReader();
+
+    reader.onload = function(event){
+
+        selectedImage = event.target.result;
+
+        document.getElementById("preview").src = selectedImage;
+
+        document.getElementById("preview").style.display = "block";
+    }
+
+    reader.readAsDataURL(file);
+});
+
+const dropArea = document.getElementById("drop-area");
+
+dropArea.addEventListener("dragover", e => e.preventDefault());
+
+dropArea.addEventListener("drop", e => {
+
+    e.preventDefault();
+
+    const file = e.dataTransfer.files[0];
+
+    const reader = new FileReader();
+
+    reader.onload = function(event){
+
+        selectedImage = event.target.result;
+
+        document.getElementById("preview").src = selectedImage;
+
+        document.getElementById("preview").style.display = "block";
+    }
+
+    reader.readAsDataURL(file);
+});
+
+function predict(){
+
+    if(!selectedImage){
+
+        alert("Upload image first");
+
+        return;
+    }
+
+    document.getElementById("mainLayout").classList.add("active");
+
+    document.getElementById("result").innerHTML =
+
+        `<div class="prediction-bar scanning">
+            🔍 Scanning...
+        </div>`;
+
+    playScanSound();
+
+    fetch("/predict", {
+
+        method:"POST",
+
+        headers:{
+            "Content-Type":"application/json"
+        },
+
+        body: JSON.stringify({
+            image:selectedImage
+        })
+    })
+
+    .then(res => res.json())
+
+    .then(data => {
+
+        stopScanSound();
+
+        let randomProblems = getRandomProblems(data.prediction);
+
+        let problems = "<ul>";
+
+        randomProblems.forEach(problem => {
+            problems += `<li>${problem}</li>`;
+        });
+
+        problems += "</ul>";
+
+        let r = 45;
+
+        let c = 2 * Math.PI * r;
+
+        let offset = c - (data.confidence / 100) * c;
+
+        document.getElementById("result").innerHTML =
+
+        `
+        <div class="prediction-bar ${data.prediction}">
+            ${data.prediction.toUpperCase()}
+        </div>
+
+        <div class="tip-box">
+            <b>Tip:</b> ${data.tip}
+        </div>
+
+        <div class="problems">
+
+            <div class="problem-left">
+
+                <b>⚠️ If not disposed properly:</b>
+
+                ${problems}
+
+            </div>
+
+            <div class="problem-right">
+
+                <div class="circle-wrap">
+
+                    <svg width="100" height="100">
+
+                        <circle class="bg" cx="50" cy="50" r="${r}"></circle>
+
+                        <circle id="progressCircle" class="progress"
+
+                            cx="50"
+                            cy="50"
+                            r="${r}"
+
+                            stroke-dasharray="${c}"
+
+                            stroke-dashoffset="${c}">
+                        </circle>
+
+                    </svg>
+
+                    <div class="circle-text">
+                        ${data.confidence}%
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+        `;
+
+        let color = "#616161";
+
+        if(data.prediction === "recyclable")
+            color = "#2196F3";
+
+        else if(data.prediction === "biodegradable")
+            color = "#4CAF50";
+
+        else if(data.prediction === "hazardous")
+            color = "#e53935";
+
+        else if(data.prediction === "non_recyclable")
+            color = "#616161";
+
+        setTimeout(()=>{
+
+            document.getElementById("progressCircle").style.stroke = color;
+
+            document.querySelector(".progress").style.strokeDashoffset = offset;
+
+        },100);
+
+        let cleanText = data.clean_prediction;
+
+        let speechText =
+            `This waste is ${cleanText} with ${data.confidence} percent confidence`;
+
+        speakResult(speechText);
+
+    });
+}
+
+</script>
+
+</body>
+</html>
